@@ -36,10 +36,11 @@ async function countBooking(roomId: number) {
   });  
 }
 
-async function updateBooking(bookingId: number, roomId: number) {
-  return prisma.booking.update({
-    where: { id: bookingId },
-    data: { roomId }
+async function deleteBooking(bookingId: number) {
+  return await prisma.booking.delete({
+    where: {
+      id: bookingId,
+    },
   });  
 }
 
@@ -54,8 +55,8 @@ const bookingRepository = {
   createBooking,
   findRoomByRoomId,
   countBooking,
-  updateBooking,
-  findBookingbyBookingId
+  findBookingbyBookingId,
+  deleteBooking
 };
 
 export default bookingRepository;

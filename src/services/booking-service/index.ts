@@ -53,7 +53,7 @@ async function createNewBooking(userId: number, roomId: number ) {
   return booking;
 }
 
-async function updateBooking(userId: number, bookingId: number, roomId: number) {
+async function updateUserBooking(roomId: number, userId: number, bookingId: number) {
   const booking = await bookingRepository.findBookingbyBookingId(bookingId);
 
   if(!booking) {
@@ -76,15 +76,17 @@ async function updateBooking(userId: number, bookingId: number, roomId: number) 
     throw forbiddenError();
   }
 
-  const updateBooking = await bookingRepository.updateBooking(bookingId, roomId);
+  await bookingRepository.deleteBooking(bookingId);
 
-  return updateBooking.id;
+  const updateBooking = await bookingRepository.createBooking(userId, roomId);
+
+  return updateBooking;
 }
 
 const bookingService = {
   getBooking,
   createNewBooking,
-  updateBooking
+  updateUserBooking
 };
 
 export default bookingService;
