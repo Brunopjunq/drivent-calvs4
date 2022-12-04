@@ -322,6 +322,37 @@ describe("PUT /booking/:bookingId", () => {
       expect(response.status).toBe(httpStatus.NOT_FOUND);
     });
 
+    it("should respond with status 404 if params roomId doesnt exist", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotel();
+      const room = await createRoom(hotel.id, 1);
+      const otherRoom = await createRoom(hotel.id, 1);
+      const booking = await createBooking(user.id, room.id);
+      const body = { roomId: otherRoom.id + 1 };
+
+      const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+
+    it("should respond with status 403 if roomId is at maximum capacity", async () => {
+      const user = await createUser();
+      const otherUser = await createUser();
+      const token = await generateValidToken(user);
+      const hotel = await createHotel();
+      const room = await createRoom(hotel.id, 1);
+      const otherRoom = await createRoom(hotel.id, 1);
+      await createBooking(otherUser.id, otherRoom.id);
+      const booking = await createBooking(user.id, room.id);
+
+      const body = { roomId: otherRoom.id };
+
+      const response = await server.put(`/booking/${booking.id}`).set("Authorization", `Bearer ${token}`).send(body);
+
+      expect(response.status).toBe(httpStatus.FORBIDDEN);
+    });
+
     it("should respond with status 200 and bookingId", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
