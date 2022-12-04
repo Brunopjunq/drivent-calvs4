@@ -50,7 +50,7 @@ async function createNewBooking(userId: number, roomId: number ) {
 
   const booking = await bookingRepository.createBooking(userId, roomId);
 
-  return booking.id;
+  return booking;
 }
 
 async function updateBooking(userId: number, bookingId: number, roomId: number) {
